@@ -16,10 +16,18 @@ router.post("/login", login);
 router.post("/logout", logout);
 
 router.put(
-  "/profile",
+  "/update-profile",
   verifyToken,
   upload.single("profilePicture"),
   updateProfile
 );
+
+router.get("/check", verifyToken, (req, res) => {
+  if (req.user) {
+    res.status(200).json({ message: "Authenticated" });
+  } else {
+    res.status(401).json({ message: "Not authenticated" });
+  }
+});
 
 export default router;

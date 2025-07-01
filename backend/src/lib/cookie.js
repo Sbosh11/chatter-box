@@ -1,7 +1,7 @@
 export const setTokenCookie = (res, token) => {
   const isProd = process.env.NODE_ENV === "production";
 
-  res.cookie("jwt", token, {
+  res.cookie("token", token, {
     httpOnly: true,
     secure: isProd,
     sameSite: isProd ? "Strict" : "Lax",
