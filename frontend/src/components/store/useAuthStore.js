@@ -21,6 +21,21 @@ const useAuthStore = create((set) => ({
       set({ isCheckingAuth: false });
     }
   },
+
+  // Signup
+  signup: async (userInfo) => {
+    set({ isSigningUp: true });
+    try {
+      const res = await axiosInstance.post("/auth/signup", userInfo);
+      set({ authUser: res.data });
+      return { success: true };
+    } catch (error) {
+      console.error("Signup failed:", error);
+      return { success: false, error };
+    } finally {
+      set({ isSigningUp: false });
+    }
+  },
   /*** 
   // Login
   login: async (credentials) => {
@@ -48,20 +63,6 @@ const useAuthStore = create((set) => ({
     }
   },
 
-  // Signup
-  signup: async (userInfo) => {
-    set({ isSigningUp: true });
-    try {
-      const res = await axiosInstance.post("/auth/signup", userInfo);
-      set({ authUser: res.data });
-      return { success: true };
-    } catch (error) {
-      console.error("Signup failed:", error);
-      return { success: false, error };
-    } finally {
-      set({ isSigningUp: false });
-    }
-  },
 
   // Update Profile (optional example)
   updateProfile: async (profileData) => {

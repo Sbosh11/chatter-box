@@ -1,5 +1,20 @@
 @import "tailwindcss";
 @plugin "daisyui";
+
+@theme {
+  --color-shark-50: #f6f8f9;
+  --color-shark-100: #eceff2;
+  --color-shark-200: #d4dce3;
+  --color-shark-300: #aebecb;
+  --color-shark-400: #829aae;
+  --color-shark-500: #637e94;
+  --color-shark-600: #4e667b;
+  --color-shark-700: #405264;
+  --color-shark-800: #384654;
+  --color-shark-900: #323d48;
+  --color-shark-950: #222931;
+}
+
 /*:root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
