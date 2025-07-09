@@ -1,8 +1,11 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import useAuthStore from "../components/store/useAuthStore.js";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
+import toast, { Toaster } from "react-hot-toast";
 
 const SignUpPage = () => {
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     username: "",
@@ -14,35 +17,64 @@ const SignUpPage = () => {
 
   const validateForm = () => {
     const { username, email, password } = formData;
-    if (!username || !email || !password) {
-      return "All fields are required";
+
+    if (!username.trim()) {
+      toast.error("Username is required");
+      return false;
     }
+
+    if (!email.trim()) {
+      toast.error("Email is required");
+      return false;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      toast.error("Invalid email format");
+      return false;
+    }
+
+    if (!password) {
+      toast.error("Password is required");
+      return false;
+    }
+
     if (password.length < 6) {
-      return "Password must be at least 6 characters long";
+      toast.error("Password must be at least 6 characters long");
+      return false;
     }
-    return null;
+
+    return true;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const error = validateForm();
-    if (error) {
-      alert(error); // replace with toast/snackbar if preferred
-      return;
+
+    if (!validateForm()) return;
+
+    const { success, user, error } = await signup(formData);
+
+    if (success) {
+      toast.success(`Welcome, ${user.username}!`);
+      setFormData({ username: "", email: "", password: "" });
+      navigate("/login"); // Your chat page
+    } else {
+      const message =
+        error?.response?.data?.message ||
+        error?.message ||
+        "Signup failed. Please try again.";
+      toast.error(message);
     }
-    signup(formData); // assuming your store handles side effects
   };
 
   return (
     <div className="min-h-screen grid place-items-center">
       <div className="flex flex-col items-center justify-center p-6 sm:p-12 w-full">
         <div className="w-full max-w-sm p-6 rounded-lg shadow-lg bg-shark-950 bg-clip-padding backdrop-filter backdrop-blur-lg bg-opacity-0">
-          {/* Form Header */}
           <h1 className="text-3xl font-semibold text-center text-white mb-6">
             Sign Up for <span className="text-blue-500">ChatApp</span>
           </h1>
 
-          {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="block text-white text-left">Username</label>
@@ -71,7 +103,9 @@ const SignUpPage = () => {
             </div>
 
             <div className="relative">
-              <label className="block text-white text-left mb-1">Password</label>
+              <label className="block text-white text-left mb-1">
+                Password
+              </label>
               <input
                 value={formData.password}
                 onChange={(e) =>
@@ -104,6 +138,8 @@ const SignUpPage = () => {
               )}
             </button>
           </form>
+
+          <Toaster position="top-center" reverseOrder={false} />
 
           <div className="mt-4 text-center">
             <p className="text-white">

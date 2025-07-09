@@ -27,8 +27,11 @@ const useAuthStore = create((set) => ({
     set({ isSigningUp: true });
     try {
       const res = await axiosInstance.post("/auth/signup", userInfo);
-      set({ authUser: res.data });
-      return { success: true };
+      const { user, token } = res.data;
+
+      set({ authUser: user });
+
+      return { success: true, user, token };
     } catch (error) {
       console.error("Signup failed:", error);
       return { success: false, error };
