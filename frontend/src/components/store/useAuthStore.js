@@ -39,7 +39,7 @@ const useAuthStore = create((set) => ({
       set({ isSigningUp: false });
     }
   },
-  /*** 
+
   // Login
   login: async (credentials) => {
     set({ isLoggingIn: true });
@@ -66,7 +66,6 @@ const useAuthStore = create((set) => ({
     }
   },
 
-
   // Update Profile (optional example)
   updateProfile: async (profileData) => {
     set({ isUpdatingProfile: true });
@@ -80,7 +79,7 @@ const useAuthStore = create((set) => ({
     } finally {
       set({ isUpdatingProfile: false });
     }
-  },*/
+  },
 }));
 
 export default useAuthStore;
