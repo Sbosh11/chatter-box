@@ -10,19 +10,29 @@ import SettingsPage from "./pages/SettingsPage";
 import Navbar from "./components/Navbar";
 import { Loader } from "lucide-react";
 import "./App.css";
+import { Toaster } from "react-hot-toast";
 
 function App() {
-  const { authUser, checkAuth, isCheckingAuth } = useAuthStore();
+  // const { authUser, checkAuth, isCheckingAuth } = useAuthStore();
+  const authUser = useAuthStore((state) => state.authUser);
+  const checkAuth = useAuthStore((state) => state.checkAuth);
+  const isCheckingAuth = useAuthStore((state) => state.isCheckingAuth);
 
   useEffect(() => {
     checkAuth();
   }, [checkAuth]);
-  console.log("App rendered with authUser:", authUser);
+
+  useEffect(() => {
+    console.log("App rendered with authUser:", authUser);
+  }, [authUser]);
+
   if (isCheckingAuth && !authUser) {
-    return <Loader className="size-10 animate-spin m-auto" />; // Show a loading state while checking auth
+    return <Loader className="size-10 animate-spin m-auto" />;
   }
+
   return (
     <>
+      <Toaster position="top-center" reverseOrder={false} />
       <Navbar />
       <Routes>
         <Route
@@ -40,5 +50,4 @@ function App() {
     </>
   );
 }
-
 export default App;

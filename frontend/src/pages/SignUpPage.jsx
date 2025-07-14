@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import useAuthStore from "../components/store/useAuthStore.js";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
-import toast, { Toaster } from "react-hot-toast";
+import { toast } from "react-hot-toast";
 
 const SignUpPage = () => {
   const navigate = useNavigate();
@@ -57,7 +57,7 @@ const SignUpPage = () => {
     if (success) {
       toast.success(`Welcome, ${user.username}!`);
       setFormData({ username: "", email: "", password: "" });
-      navigate("/login"); // Your chat page
+      setTimeout(() => navigate("/"), 1000);
     } else {
       const message =
         error?.response?.data?.message ||
@@ -139,14 +139,12 @@ const SignUpPage = () => {
             </button>
           </form>
 
-          <Toaster position="top-center" reverseOrder={false} />
-
           <div className="mt-4 text-center">
             <p className="text-white">
               Already have an account?{" "}
-              <a href="/login" className="text-blue-500 hover:underline">
+              <Link href="/" className="text-blue-500 hover:underline">
                 Login
-              </a>
+              </Link>
             </p>
           </div>
         </div>
