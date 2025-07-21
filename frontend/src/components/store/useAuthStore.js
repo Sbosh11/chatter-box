@@ -14,6 +14,7 @@ const useAuthStore = create((set) => ({
     try {
       const res = await axiosInstance.get("/auth/check");
       set({ authUser: res.data });
+      // console.log("User authenticated:", res.data);
     } catch (error) {
       console.error("Error in checkAuth:", error);
       set({ authUser: null });
@@ -45,8 +46,10 @@ const useAuthStore = create((set) => ({
     set({ isLoggingIn: true });
     try {
       const res = await axiosInstance.post("/auth/login", credentials);
-      set({ authUser: res.data });
-      return { success: true };
+      const { user, token } = res.data;
+      //console.log(res);
+      set({ authUser: user });
+      return { success: true, user, token };
     } catch (error) {
       console.error("Login failed:", error);
       return { success: false, error };
@@ -67,11 +70,15 @@ const useAuthStore = create((set) => ({
   },
 
   // Update Profile (optional example)
-  updateProfile: async (profileData) => {
+  updateProfile: async (formData) => {
     set({ isUpdatingProfile: true });
     try {
-      const res = await axiosInstance.put("/auth/update-profile", profileData);
-      set({ authUser: res.data });
+      const res = await axiosInstance.put("/auth/update-profile", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      set({ authUser: res.data.user });
       return { success: true };
     } catch (error) {
       console.error("Profile update failed:", error);

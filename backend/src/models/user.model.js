@@ -19,11 +19,7 @@ const userSchema = new mongoose.Schema(
     },
     profilePicture: {
       type: String,
-      default: "https://example.com/default-profile-picture.png",
-    },
-    createdAt: {
-      type: Date,
-      default: Date.now,
+      default: "https://i.pravatar.cc/300",
     },
   },
   { timestamps: true }

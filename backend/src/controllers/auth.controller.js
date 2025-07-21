@@ -4,7 +4,7 @@ import { generateToken } from "../lib/jwt.js";
 import { setTokenCookie } from "../lib/cookie.js";
 import { handleError } from "../lib/error.js";
 
-// ✅ Utility to return user response
+// Utility to return user response
 const buildUserResponse = (user, token = null) => ({
   message: token ? "Login successful" : "Profile updated successfully",
   user: {
@@ -16,7 +16,7 @@ const buildUserResponse = (user, token = null) => ({
   ...(token && { token }),
 });
 
-// ✅ Signup controller
+// Signup controller
 export const signup = async (req, res) => {
   try {
     const { username, email, password } = req.body;
@@ -66,8 +66,9 @@ export const signup = async (req, res) => {
   }
 };
 
-// ✅ Login controller
+// Login controller
 export const login = async (req, res) => {
+  console.log("Login controller called");
   try {
     const { emailOrUsername, password } = req.body;
 
@@ -86,13 +87,16 @@ export const login = async (req, res) => {
     const token = generateToken(user);
     setTokenCookie(res, token);
 
-    res.status(200).json(buildUserResponse(user, token));
+    const responseData = buildUserResponse(user, token);
+    console.log("buildUserResponse output:", responseData);
+
+    res.status(200).json(responseData);
   } catch (err) {
     handleError(res, err);
   }
 };
 
-// ✅ Update profile controller
+// Update profile controller
 export const updateProfile = async (req, res) => {
   try {
     const { username, email, profilePicture } = req.body;
@@ -117,8 +121,15 @@ export const updateProfile = async (req, res) => {
   }
 };
 
-// ✅ Logout controller
+//Logout controller
 export const logout = (req, res) => {
-  res.clearCookie("jwt");
+  const isProd = process.env.NODE_ENV === "production";
+
+  res.clearCookie("token", {
+    httpOnly: true,
+    secure: isProd,
+    sameSite: isProd ? "Strict" : "Lax",
+  });
+
   res.status(200).json({ message: "Logout successful" });
 };
