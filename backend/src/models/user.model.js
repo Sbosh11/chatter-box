@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+
 const userSchema = new mongoose.Schema(
   {
     username: {
@@ -20,6 +21,12 @@ const userSchema = new mongoose.Schema(
     profilePicture: {
       type: String,
       default: "https://i.pravatar.cc/300",
+    },
+    resetPasswordToken: {
+      type: String,
+    },
+    resetPasswordExpires: {
+      type: Date,
     },
   },
   { timestamps: true }

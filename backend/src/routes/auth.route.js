@@ -4,6 +4,8 @@ import {
   signup,
   logout,
   updateProfile,
+  forgotPassword,
+  resetPassword,
 } from "../controllers/auth.controller.js";
 import { verifyToken } from "../middleware/auth.middleware.js";
 import { upload } from "../lib/cloudinary.config.js";
@@ -12,6 +14,8 @@ const router = express.Router();
 
 router.post("/signup", signup);
 router.post("/login", login);
+router.post("/forgot-password", forgotPassword);
+router.post("/reset-password/:token", resetPassword);
 router.post("/logout", logout);
 
 router.put(
