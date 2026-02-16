@@ -4,6 +4,7 @@ import User from "../models/user.model.js";
 import { generateToken } from "../lib/jwt.js";
 import { setTokenCookie } from "../lib/cookie.js";
 import { handleError } from "../lib/error.js";
+import sendEmail from "../lib/sendEmail.js";
 
 // Utility to return user response
 const buildUserResponse = (user, token = null) => ({
@@ -121,8 +122,7 @@ export const updateProfile = async (req, res) => {
     handleError(res, err);
   }
 };
-/*** 
-
+/** 
 // Forgot password
 export const forgotPassword = async (req, res) => {
   try {
@@ -161,7 +161,7 @@ export const forgotPassword = async (req, res) => {
     handleError(res, err);
   }
 };**/
-// Forgot password
+/** Forgot password
 export const forgotPassword = async (req, res) => {
   try {
     const { email } = req.body;
@@ -197,6 +197,73 @@ export const forgotPassword = async (req, res) => {
     res.json({
       message: "Password reset link generated",
       ...(isDev && { resetUrl }),
+    });
+  } catch (err) {
+    handleError(res, err);
+  }
+};**/
+
+export const forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).send("Email is required");
+    }
+
+    const user = await User.findOne({ email });
+
+    // Do NOT reveal if email exists
+    if (!user) {
+      return res
+        .status(200)
+        .json({ message: "If that email exists, a reset link was sent" });
+    }
+
+    // Generate token
+    const resetToken = crypto.randomBytes(32).toString("hex");
+
+    user.resetPasswordToken = crypto
+      .createHash("sha256")
+      .update(resetToken)
+      .digest("hex");
+
+    user.resetPasswordExpires = Date.now() + 15 * 60 * 1000; // 15 min
+    await user.save();
+
+    const resetUrl = `${process.env.CLIENT_URL}/reset-password/${resetToken}`;
+
+    const isDev = process.env.NODE_ENV !== "production";
+
+    // =========================
+    // DEV MODE → RETURN LINK
+    // =========================
+    if (isDev) {
+      return res.json({
+        message: "Password reset link generated (DEV)",
+        resetUrl,
+      });
+    }
+
+    // =========================
+    // PROD MODE → SEND EMAIL
+    // =========================
+    const htmlMessage = `
+      <h2>Password Reset</h2>
+      <p>You requested a password reset.</p>
+      <p>Click the link below:</p>
+      <a href="${resetUrl}">${resetUrl}</a>
+      <p>This link expires in 15 minutes.</p>
+    `;
+
+    await sendEmail({
+      to: user.email,
+      subject: "Reset your ChatterBox password",
+      html: htmlMessage,
+    });
+
+    res.json({
+      message: "Password reset link sent to your email",
     });
   } catch (err) {
     handleError(res, err);

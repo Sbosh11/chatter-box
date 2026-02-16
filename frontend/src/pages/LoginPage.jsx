@@ -3,6 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import useAuthStore from "../components/store/useAuthStore.js";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { toast } from "react-hot-toast";
+import ForgotPassword from "./ForgotPassword";
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -116,6 +117,15 @@ const LoginPage = () => {
               Don’t have an account?{" "}
               <Link to="/signup" className="text-blue-500 hover:underline">
                 Sign Up
+              </Link>
+            </p>
+            <p className="text-white">
+              Forgot Password?{" "}
+              <Link
+                to="/forgot-password"
+                className="text-blue-500 hover:underline"
+              >
+                Reset Password
               </Link>
             </p>
           </div>

@@ -6,11 +6,12 @@ import authRoutes from "./routes/auth.route.js";
 import messageRoutes from "./routes/message.route.js";
 import { fixOldProfilePictures } from "./controllers/user.controller.js";
 import cors from "cors";
+import { globalLimiter } from "./middleware/rateLimit.js";
 
 dotenv.config();
 const app = express();
 app.use(cookieParser()); // Middleware to parse cookies
-
+app.use(globalLimiter);
 const port = process.env.PORT || 5001;
 app.use(express.json()); // Middleware to parse JSON bodies
 app.use(express.urlencoded({ extended: true })); // Middleware to parse URL-encoded bodies
