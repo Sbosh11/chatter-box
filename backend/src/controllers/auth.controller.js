@@ -2,7 +2,7 @@ import bcrypt from "bcryptjs";
 import crypto from "crypto";
 import User from "../models/user.model.js";
 import { generateToken } from "../lib/jwt.js";
-import { setTokenCookie } from "../lib/cookie.js";
+import { setTokenCookie, clearTokenCookie } from "../lib/cookie.js";
 import { handleError } from "../lib/error.js";
 import sendEmail from "../lib/sendEmail.js";
 
@@ -47,7 +47,7 @@ export const signup = async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(
       password,
-      await bcrypt.genSalt(10)
+      await bcrypt.genSalt(10),
     );
 
     const newUser = await new User({
@@ -106,7 +106,7 @@ export const updateProfile = async (req, res) => {
     const updatedUser = await User.findByIdAndUpdate(
       req.user.id,
       { username, email, profilePicture },
-      { new: true, runValidators: true }
+      { new: true, runValidators: true },
     );
 
     if (!updatedUser) {
@@ -122,86 +122,7 @@ export const updateProfile = async (req, res) => {
     handleError(res, err);
   }
 };
-/** 
 // Forgot password
-export const forgotPassword = async (req, res) => {
-  try {
-    const { email } = req.body;
-
-    if (!email) {
-      return res.status(400).send("Email is required");
-    }
-
-    const user = await User.findOne({ email });
-
-    // Do NOT reveal if email exists
-    if (!user) {
-      return res
-        .status(200)
-        .json({ message: "If that email exists, a reset link was sent" });
-    }
-
-    const resetToken = crypto.randomBytes(32).toString("hex");
-
-    user.resetPasswordToken = crypto
-      .createHash("sha256")
-      .update(resetToken)
-      .digest("hex");
-
-    user.resetPasswordExpires = Date.now() + 15 * 60 * 1000; // 15 min
-    await user.save();
-
-    const resetUrl = `${process.env.CLIENT_URL}/reset-password/${resetToken}`;
-
-    // TEMP: log instead of email
-    console.log("Password reset URL:", resetUrl);
-
-    res.json({ message: "Password reset link sent" });
-  } catch (err) {
-    handleError(res, err);
-  }
-};**/
-/** Forgot password
-export const forgotPassword = async (req, res) => {
-  try {
-    const { email } = req.body;
-
-    if (!email) {
-      return res.status(400).send("Email is required");
-    }
-
-    const user = await User.findOne({ email });
-
-    // Do NOT reveal if email exists
-    if (!user) {
-      return res
-        .status(200)
-        .json({ message: "If that email exists, a reset link was sent" });
-    }
-
-    const resetToken = crypto.randomBytes(32).toString("hex");
-
-    user.resetPasswordToken = crypto
-      .createHash("sha256")
-      .update(resetToken)
-      .digest("hex");
-
-    user.resetPasswordExpires = Date.now() + 15 * 60 * 1000; // 15 min
-    await user.save();
-
-    const resetUrl = `${process.env.CLIENT_URL}/reset-password/${resetToken}`;
-
-    const isDev = process.env.NODE_ENV !== "production";
-
-    // DEV: return reset URL | PROD: hide it
-    res.json({
-      message: "Password reset link generated",
-      ...(isDev && { resetUrl }),
-    });
-  } catch (err) {
-    handleError(res, err);
-  }
-};**/
 
 export const forgotPassword = async (req, res) => {
   try {
@@ -312,13 +233,6 @@ export const resetPassword = async (req, res) => {
 
 //Logout controller
 export const logout = (req, res) => {
-  const isProd = process.env.NODE_ENV === "production";
-
-  res.clearCookie("token", {
-    httpOnly: true,
-    secure: isProd,
-    sameSite: isProd ? "Strict" : "Lax",
-  });
-
+  clearTokenCookie(res);
   res.status(200).json({ message: "Logout successful" });
 };
