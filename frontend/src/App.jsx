@@ -10,6 +10,7 @@ import SettingsPage from "./pages/SettingsPage";
 import ResetPassword from "./pages/ResetPassword.jsx";
 import ForgotPassword from "./pages/ForgotPassword.jsx";
 import Navbar from "./components/Navbar";
+import MessagesPage from "./pages/MessagesPage.jsx";
 import { Loader } from "lucide-react";
 import "./App.css";
 import { Toaster } from "react-hot-toast";
@@ -49,6 +50,10 @@ function App() {
         <Route
           path="/settings"
           element={authUser ? <SettingsPage /> : <Navigate to="/login" />}
+        />
+        <Route
+          path="/messages"
+          element={authUser ? <MessagesPage /> : <Navigate to="/login" />}
         />
       </Routes>
     </>

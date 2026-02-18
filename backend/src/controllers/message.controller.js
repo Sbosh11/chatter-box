@@ -7,7 +7,7 @@ export const getUsers = async (req, res) => {
 
     const users = await User.find(
       { _id: { $ne: currentUserId } }, // Exclude current user
-      "username email profilePicture" // Only return needed fields
+      "username email profilePicture", // Only return needed fields
     );
 
     res.status(200).json(users);
@@ -55,7 +55,7 @@ export const sendMessage = async (req, res) => {
 
     const message = await Message.create({
       sender: senderId,
-      receiver: recipientId,
+      recipient: recipientId,
       content: text,
       images,
     });
