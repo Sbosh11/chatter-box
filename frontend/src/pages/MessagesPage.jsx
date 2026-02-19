@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "../components/lib/axios.js"; // use axiosInstance with baseURL
 import useAuthStore from "../components/store/useAuthStore.js";
+import { useLocation } from "react-router-dom";
 
 const MessagesPage = () => {
   const authUser = useAuthStore((state) => state.authUser);
@@ -10,6 +11,22 @@ const MessagesPage = () => {
   const [newMessage, setNewMessage] = useState("");
   const [loadingUsers, setLoadingUsers] = useState(true);
   const [loadingMessages, setLoadingMessages] = useState(false);
+  const location = useLocation();
+
+  // Sync selected chat with URL query parameter
+  // Allows navigation from HomePage → MessagesPage with a preselected user
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const userIdFromURL = params.get("user");
+
+    if (userIdFromURL && users.length > 0) {
+      const foundUser = users.find((u) => u._id === userIdFromURL);
+      if (foundUser) {
+        setSelectedUser(foundUser);
+      }
+    }
+  }, [location.search, users]);
 
   /* ---------------- FETCH USERS ---------------- */
   useEffect(() => {
@@ -73,15 +90,15 @@ const MessagesPage = () => {
 
   /* ---------------- RENDER ---------------- */
   return (
-    <div className="flex h-[calc(100vh-60px)]">
+    <div className="flex h-[calc(100vh-60px)] text-white">
       {/* USERS PANEL */}
-      <div className="w-1/4 border-r overflow-y-auto">
-        <h2 className="p-3 font-semibold">Chats</h2>
+      <div className="w-1/4 bg-gray-800 border-r border-gray-700 overflow-y-auto">
+        <h2 className="p-3 font-semibold border-b border-gray-700">Chats</h2>
 
         {loadingUsers ? (
-          <p className="p-3 text-gray-500">Loading users...</p>
+          <p className="p-3 text-gray-400">Loading users...</p>
         ) : users.length === 0 ? (
-          <p className="p-3 text-gray-500">
+          <p className="p-3 text-gray-400">
             No users found. Create another account to test messaging.
           </p>
         ) : (
@@ -89,54 +106,66 @@ const MessagesPage = () => {
             <div
               key={user._id}
               onClick={() => setSelectedUser(user)}
-              className={`p-3 cursor-pointer hover:bg-gray-100 ${
-                selectedUser?._id === user._id ? "bg-gray-200" : ""
+              className={`p-3 cursor-pointer transition ${
+                selectedUser?._id === user._id
+                  ? "bg-[#293448]"
+                  : "hover:bg-[#293448]"
               }`}
             >
               <div className="font-medium">{user.username}</div>
-              <div className="text-sm text-gray-500">{user.email}</div>
+              <div className="text-sm text-gray-400">{user.email}</div>
             </div>
           ))
         )}
       </div>
 
       {/* CHAT PANEL */}
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col bg-gray-800">
         {/* HEADER */}
-        <div className="p-3 border-b font-semibold">
+        <div className="p-3 border-b border-gray-700 font-semibold bg-gray-800">
           {selectedUser ? selectedUser.username : "Select a chat"}
         </div>
 
         {/* MESSAGES */}
-        <div className="flex-1 p-3 overflow-y-auto">
+        <div className="flex-1 p-4 overflow-y-auto">
           {!selectedUser ? (
-            <p className="text-gray-500">Choose someone to start chatting</p>
+            <p className="text-gray-400">Choose someone to start chatting</p>
           ) : loadingMessages ? (
-            <p className="text-gray-500">Loading messages...</p>
+            <p className="text-gray-400">Loading messages...</p>
           ) : messages.length === 0 ? (
-            <p className="text-gray-500">No messages yet</p>
+            <p className="text-gray-400">No messages yet</p>
           ) : (
-            messages.map((msg) => (
-              <div
-                key={msg._id}
-                className={`mb-2 max-w-xs p-2 rounded ${
-                  msg.sender === authUser._id
-                    ? "bg-blue-500 text-white ml-auto"
-                    : "bg-gray-300"
-                }`}
-              >
-                {msg.content}
-              </div>
-            ))
+            messages.map((msg) => {
+              const isSender = msg.sender === authUser.id;
+
+              return (
+                <div
+                  key={msg._id}
+                  className={`mb-3 flex ${
+                    isSender ? "justify-end" : "justify-start"
+                  }`}
+                >
+                  <div
+                    className={`max-w-xs p-3 rounded-lg shadow ${
+                      isSender
+                        ? "bg-[#4064bf] text-white rounded-br-none"
+                        : "bg-[#293448] text-white rounded-bl-none"
+                    }`}
+                  >
+                    {msg.content}
+                  </div>
+                </div>
+              );
+            })
           )}
         </div>
 
         {/* INPUT */}
         {selectedUser && (
-          <div className="p-3 border-t flex gap-2">
+          <div className="p-3 border-t border-gray-700 flex gap-2 bg-gray-800">
             <input
               type="text"
-              className="flex-1 border rounded p-2"
+              className="flex-1 bg-gray-900 border border-gray-700 rounded p-2 focus:outline-none focus:border-blue-500"
               value={newMessage}
               onChange={(e) => setNewMessage(e.target.value)}
               placeholder="Type a message..."
@@ -144,7 +173,7 @@ const MessagesPage = () => {
             />
             <button
               onClick={handleSendMessage}
-              className="bg-blue-500 text-white px-4 rounded"
+              className="bg-[#4064bf] text-white px-4 rounded hover:bg-blue-500 transition"
             >
               Send
             </button>
