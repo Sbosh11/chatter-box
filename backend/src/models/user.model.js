@@ -20,7 +20,7 @@ const userSchema = new mongoose.Schema(
     },
     profilePicture: {
       type: String,
-      default: "https://i.pravatar.cc/300",
+      default: "https://i.pravatar.cc/300?img=16",
     },
     resetPasswordToken: {
       type: String,
@@ -29,7 +29,7 @@ const userSchema = new mongoose.Schema(
       type: Date,
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 const User = mongoose.model("User", userSchema);

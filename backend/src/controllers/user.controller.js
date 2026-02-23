@@ -11,7 +11,7 @@ export const fixOldProfilePictures = async (req, res) => {
     }
 
     const updates = usersToFix.map((user) => {
-      user.profilePicture = `https://i.pravatar.cc/300?u=${user._id}`;
+      user.profilePicture = `https://i.pravatar.cc/150?img=16&u=${user._id}`;
       return user.save();
     });
 

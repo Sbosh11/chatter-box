@@ -101,27 +101,46 @@ export const login = async (req, res) => {
 // Update profile controller
 export const updateProfile = async (req, res) => {
   try {
-    const { username, email, profilePicture } = req.body;
+    if (!req.user || !req.user.id) {
+      return res.status(401).send("Not authenticated");
+    }
 
-    const updatedUser = await User.findByIdAndUpdate(
-      req.user.id,
-      { username, email, profilePicture },
-      { new: true, runValidators: true },
-    );
+    const updateData = {};
+
+    if (req.body.username) updateData.username = req.body.username;
+    if (req.body.email) updateData.email = req.body.email;
+
+    if (req.file) {
+      updateData.profilePicture = req.file.path;
+    }
+
+    if (Object.keys(updateData).length === 0) {
+      return res.status(400).send("No updates provided");
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(req.user.id, updateData, {
+      new: true,
+      runValidators: true,
+    });
 
     if (!updatedUser) {
       return res.status(404).send("User not found");
     }
 
-    if (!req.user || !req.user.id) {
-      return res.status(401).send("Not authenticated");
-    }
-
     res.status(200).json(buildUserResponse(updatedUser));
   } catch (err) {
-    handleError(res, err);
+    console.error("UPDATE PROFILE ERROR:", err);
+
+    if (err.code === 11000) {
+      return res.status(400).json({
+        message: "Email or username already exists",
+      });
+    }
+
+    res.status(500).json({ message: err.message });
   }
 };
+
 // Forgot password
 
 export const forgotPassword = async (req, res) => {

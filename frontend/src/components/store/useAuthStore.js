@@ -78,13 +78,10 @@ const useAuthStore = create((set) => ({
 
     try {
       const res = await axiosInstance.put("/auth/update-profile", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
+        headers: { "Content-Type": "multipart/form-data" },
       });
 
-      set({ authUser: res.data.user });
-
+      set({ authUser: res.data.user }); // persist updated user
       return { success: true };
     } catch (error) {
       console.error("Profile update failed:", error);
