@@ -130,7 +130,7 @@ const ProfilePage = () => {
       {/* ----------------------------- */}
       <div className="flex flex-col items-center mb-6">
         <img
-          src={preview || profilePic || "https://i.pravatar.cc/300"}
+          src={preview || profilePic}
           alt="Profile"
           className="w-32 h-32 rounded-full object-cover border border-gray-700 mb-3"
         />

@@ -20,7 +20,7 @@ const userSchema = new mongoose.Schema(
     },
     profilePicture: {
       type: String,
-      default: "https://i.pravatar.cc/300?img=16",
+      default: "/backend/public/images/avatar-placeholder.webp",
     },
     resetPasswordToken: {
       type: String,

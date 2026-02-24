@@ -98,6 +98,33 @@ export const login = async (req, res) => {
   }
 };
 
+// Check auth status controller
+
+export const checkAuth = async (req, res) => {
+  try {
+    if (!req.user?.id) {
+      return res.status(401).send("Not authenticated");
+    }
+
+    const user = await User.findById(req.user.id);
+
+    if (!user) {
+      return res.status(404).send("User not found");
+    }
+
+    res.status(200).json({
+      user: {
+        id: user._id,
+        username: user.username,
+        email: user.email,
+        profilePicture: user.profilePicture,
+      },
+    });
+  } catch (err) {
+    handleError(res, err);
+  }
+};
+
 // Update profile controller
 export const updateProfile = async (req, res) => {
   try {
