@@ -72,6 +72,7 @@ const ResetPassword = () => {
 
               <input
                 type="password"
+                autocomplete="new-password"
                 placeholder="Enter new password"
                 className="w-full p-2 border border-gray-600 rounded"
                 value={password}
@@ -86,6 +87,7 @@ const ResetPassword = () => {
 
               <input
                 type="password"
+                autocomplete="new-password"
                 placeholder="Confirm new password"
                 className="w-full p-2 border border-gray-600 rounded"
                 value={confirmPassword}

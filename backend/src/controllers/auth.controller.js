@@ -154,7 +154,11 @@ export const updateProfile = async (req, res) => {
       return res.status(404).send("User not found");
     }
 
-    res.status(200).json(buildUserResponse(updatedUser));
+    // REGENERATE TOKEN
+    const token = generateToken(updatedUser);
+    setTokenCookie(res, token);
+
+    res.status(200).json(buildUserResponse(updatedUser, token));
   } catch (err) {
     console.error("UPDATE PROFILE ERROR:", err);
 
@@ -167,7 +171,6 @@ export const updateProfile = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
-
 // Forgot password
 
 export const forgotPassword = async (req, res) => {

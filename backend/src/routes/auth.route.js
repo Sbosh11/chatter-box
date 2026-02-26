@@ -26,12 +26,26 @@ router.put(
   updateProfile,
 );
 router.get("/test", (req, res) => res.send("Auth route working"));
-router.get("/check", verifyToken, (req, res) => {
+/*router.get("/check", verifyToken, (req, res) => {
   if (req.user) {
     res.status(200).json(req.user, { message: "Authenticated" });
   } else {
     res.status(401).json({ message: "Not authenticated" });
   }
-});
+});*/
+router.get("/check", verifyToken, (req, res) => {
+  try {
+    if (!req.user) {
+      return res.status(401).json({ message: "Not authenticated" });
+    }
 
+    res.status(200).json({
+      user: req.user,
+      message: "Authenticated",
+    });
+  } catch (error) {
+    console.error("CHECK AUTH ERROR:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
 export default router;
