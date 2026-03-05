@@ -56,7 +56,7 @@ const LoginPage = () => {
       <div className="flex flex-col items-center justify-center p-6 sm:p-12 w-full">
         <div className="w-full max-w-sm p-6 rounded-lg shadow-lg bg-shark-950 bg-clip-padding backdrop-filter backdrop-blur-lg bg-opacity-0">
           <h1 className="text-3xl font-semibold text-center text-white mb-6">
-            Log In to <span className="text-blue-500">ChatApp</span>
+            Log In to <span className="text-blue-500">Chatter-Box</span>
           </h1>
 
           <form onSubmit={handleSubmit} className="space-y-4">

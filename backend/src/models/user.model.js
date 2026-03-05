@@ -20,7 +20,7 @@ const userSchema = new mongoose.Schema(
     },
     profilePicture: {
       type: String,
-      default: "/images/avatar-placeholder.webp",
+      default: null,
     },
     resetPasswordToken: {
       type: String,

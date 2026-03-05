@@ -1,4 +1,6 @@
 import express from "express";
+import path from "path";
+import { fileURLToPath } from "url";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import { connectDB } from "./lib/db.js";
@@ -11,6 +13,8 @@ import helmet from "helmet";
 
 dotenv.config();
 const app = express();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 app.use(cookieParser()); // Middleware to parse cookies
 app.use(globalLimiter);
 app.use(helmet()); // Basic security headers
@@ -39,6 +43,9 @@ app.use(
 app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRoutes);
 //app.get("/api/dev/fix-profile-pics", fixOldProfilePictures); // Route to fix old profile pictures
+
+// Serve the public/images folder at /images
+app.use("/images", express.static(path.join(__dirname, "public/images")));
 
 app.listen(port, () => {
   console.log(`Server is running on port http://localhost:${port}`);

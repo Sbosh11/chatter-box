@@ -13,7 +13,7 @@ const buildUserResponse = (user, token = null) => ({
     id: user._id,
     username: user.username,
     email: user.email,
-    profilePicture: user.profilePicture,
+    profilePicture: user.profilePicture || "/images/avatar-placeholder.webp",
   },
   ...(token && { token }),
 });
