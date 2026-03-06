@@ -112,8 +112,20 @@ const MessagesPage = () => {
                   : "hover:bg-[#293448]"
               }`}
             >
+              {/** 
               <div className="font-medium">{user.username}</div>
-              <div className="text-sm text-gray-400">{user.email}</div>
+              <div className="text-sm text-gray-400">{user.email}</div>*/}
+              <div className="flex items-center gap-3">
+                <img
+                  src={user.profilePicture}
+                  alt={user.username}
+                  className="w-10 h-10 rounded-full"
+                />
+                <div className="text-center">
+                  <div className="font-medium capitalize">{user.username}</div>
+                  <div className="text-sm text-gray-400">{user.email}</div>
+                </div>
+              </div>
             </div>
           ))
         )}
